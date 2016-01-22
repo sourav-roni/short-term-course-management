@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Coursemanagement{
-	private static Scanner in1;
+	public static Scanner in1;
 	public static void main(String []args) throws IOException{
 		System.out.println("Hello!");
 		System.out.println("Welcome to IIT Kharagpur : Short Term Course Management");
@@ -53,21 +53,15 @@ public class Coursemanagement{
 			System.out.println("3-Alter details of courses");
 			System.out.println("4-Alter details of participants");
 			System.out.println("5-Alter details of faculty");
-			System.out.println("6-Save and exit\n");
-			choice = in.nextInt();
+			System.out.println("6-Display all Courses Created in the past one year");
+			System.out.println("7-Display all Courses Created so far");
+			System.out.println("8-Save and exit\n");
+			choice = Integer.parseInt(in.nextLine());
 			switch(choice){
 				case 1: if(courseArray.size()!=10){
 							Course c = new Course();
 							c.courseCreator();
 							courseArray.add(c);
-						//System.out.println("The course created is :"+c.courseName+" "+c.courseFee+" "+c.startDate+" "+c.courseDuration+" "+c.courseCoordinator);
-						//System.out.println("The following are the faculty members :");
-						//int i=0;
-						//while(i!=c.facultylist.size()){
-						//	System.out.println("Faculty Name :"+c.facultylist.get(i).facultyName);
-						//	i++;
-						//}
-						//System.out.println("Current Size : "+courseArray.size());
 							System.out.println("The following courses have been created so far:");
 							int i = 0;
 							while(i<courseArray.size()){
@@ -97,6 +91,32 @@ public class Coursemanagement{
 						}
 						else{
 							System.out.println("Sorry. No more Courses can be created");
+							System.out.println("The following courses have been created so far:");
+							int i = 0;
+							while(i<courseArray.size()){
+								System.out.println("Serial Number :"+(i+1));
+								System.out.println("Course Name : "+courseArray.get(i).courseName);
+								System.out.println("Course Fee : "+courseArray.get(i).courseFee);
+								System.out.println("Course Start Date : "+courseArray.get(i).startDate);
+								System.out.println("Course Duration : "+courseArray.get(i).courseDuration);
+								System.out.println("\nCourse Co-ordinator : "+courseArray.get(i).courseCoordinator.facultyName);
+								System.out.println("	Department : "+courseArray.get(i).courseCoordinator.affiliatedDepartment);
+								System.out.println("	Address : "+courseArray.get(i).courseCoordinator.facultyAddress);
+								System.out.println("	Mobile Number : "+courseArray.get(i).courseCoordinator.mobile);
+								System.out.println("	E-mail : "+courseArray.get(i).courseCoordinator.email);
+								System.out.println("The course, "+courseArray.get(i).courseName+" has the following Faculty Members as Instructors");
+								int j = 0;
+								while(j< courseArray.get(i).facultylist.size()){
+									System.out.println("Faculty Name : "+courseArray.get(i).facultylist.get(j).facultyName);
+									System.out.println("	Department : "+courseArray.get(i).facultylist.get(j).affiliatedDepartment);
+									System.out.println("	Address : "+courseArray.get(i).facultylist.get(j).facultyAddress);
+									System.out.println("	Mobile Number : "+courseArray.get(i).facultylist.get(j).mobile);
+									System.out.println("	E-mail Address : "+courseArray.get(i).facultylist.get(j).email);
+									j++;
+								}
+								i++;
+								System.out.println(" ");
+							}
 						}
 						break;
 				case 2: System.out.println("Please enter the Course for which you want to create new Participants");
@@ -129,10 +149,111 @@ public class Coursemanagement{
 							System.out.println("Sorry the Course is full, no more Participants can be created\n");
 						}
 						break;
-				case 3: break;
+				case 3: System.out.print("\nEnter the name of the Course which you want to alter : ");
+						in.reset();
+						in1.reset();
+						String courseChoose = in1.nextLine();
+						i=0;
+						while(i<courseArray.size()){
+							if(courseArray.get(i).courseName.equals(courseChoose)==true){
+								break;
+							}
+							i++;
+						}
+						if(i!=courseArray.size()){
+							System.out.print("Do you want to Delete the Course? [Y/N] : ");
+							in1.reset();
+							String deleteChoice = in1.nextLine();
+							if(deleteChoice.equals("Y")==true||deleteChoice.equals("y")==true){
+								courseArray.remove(i);
+								System.out.println("The Course "+courseChoose+" has been successfully deleted");
+							}
+							else{
+								System.out.println("Entering into Course Alter Mode...");
+								boolean select = true;
+								while(select){
+									System.out.println("Please Enter your choices for editing the selected Course : ");
+									System.out.println("1-Edit Course Name");
+									System.out.println("2-Edit Course Fees");
+									System.out.println("3-Edit Course Start Date");
+									System.out.println("4-Edit Course Duration");
+									System.out.println("5-Save and Exit Edit Mode");
+									int editChoice = Integer.parseInt(in1.nextLine());
+									switch(editChoice){
+										case 1: System.out.print("Enter the new Course Name for "+courseArray.get(i).courseName+" : ");
+												in.reset();
+												//String newCourseName = in.nextLine();
+												//System.out.println(" "+newCourseName+" ");
+												//System.out.println(""+);
+												courseArray.get(i).courseName = in.nextLine();
+												break;
+										case 2: System.out.print("Enter the revised Course Fees for "+courseArray.get(i).courseName+" : ");
+												in.reset();
+												//String newCourseFees = in.nextLine();
+												courseArray.get(i).courseFee = in.nextLine();
+												break;
+										case 3: System.out.print("Enter the new Start Date for "+courseArray.get(i).courseName+" : ");
+												in.reset();
+												//String newStartDate = in.nextLine();
+												courseArray.get(i).startDate = in.nextLine();
+												break;
+										case 4: System.out.print("Enter the revised Course Duration for "+courseArray.get(i).courseName+" : ");
+												in.reset();
+												//String newCourseDuration = in.nextLine();
+												courseArray.get(i).courseDuration = in.nextLine();
+												break;
+										case 5: System.out.println("All Changes successfully Saved!!");
+												System.out.println("Exiting Edit Mode...\n");
+												select = false;
+												break;
+										default: System.out.println("Invalid Choice.Please Try Again");
+												 break;
+									}
+								}
+							}
+						}
+						break;
 				case 4: break;
 				case 5: break;
-				case 6: value = false;
+				case 6: break;
+				case 7: System.out.println("The following courses have been created so far:");
+						int k = 0;
+						while(k<courseArray.size()){
+							System.out.println("Serial Number :"+(k+1));
+							System.out.println("	Course Name : "+courseArray.get(k).courseName);
+							System.out.println("	Course Fee : "+courseArray.get(k).courseFee);
+							System.out.println("	Course Start Date : "+courseArray.get(k).startDate);
+							System.out.println("	Course Duration : "+courseArray.get(k).courseDuration);
+							System.out.println("\n	Course Co-ordinator : "+courseArray.get(k).courseCoordinator.facultyName);
+							System.out.println("		Department : "+courseArray.get(k).courseCoordinator.affiliatedDepartment);
+							System.out.println("		Address : "+courseArray.get(k).courseCoordinator.facultyAddress);
+							System.out.println("		Mobile Number : "+courseArray.get(k).courseCoordinator.mobile);
+							System.out.println("		E-mail : "+courseArray.get(k).courseCoordinator.email);
+							System.out.println("	The Course, "+courseArray.get(k).courseName+" has the following Faculty Members as Instructors");
+							int j = 0;
+							while(j< courseArray.get(k).facultylist.size()){
+								System.out.println("	Faculty Name : "+courseArray.get(k).facultylist.get(j).facultyName);
+								System.out.println("		Department : "+courseArray.get(k).facultylist.get(j).affiliatedDepartment);
+								System.out.println("		Address : "+courseArray.get(k).facultylist.get(j).facultyAddress);
+								System.out.println("		Mobile Number : "+courseArray.get(k).facultylist.get(j).mobile);
+								System.out.println("		E-mail Address : "+courseArray.get(k).facultylist.get(j).email);
+								j++;
+							}
+							System.out.println("	The Course, "+courseArray.get(k).courseName+" has the following Participants enrolled.");
+							j=0;
+							while(j< courseArray.get(k).participantlist.size()){
+								System.out.println("	Participant Name : "+courseArray.get(k).participantlist.get(j).participantName);
+								System.out.println("		Organisation : "+courseArray.get(k).participantlist.get(j).participantOrganisation);
+								System.out.println("		Address : "+courseArray.get(k).participantlist.get(j).participantAddress);
+								System.out.println("		Mobile Number : "+courseArray.get(k).participantlist.get(j).participantMobile);
+								System.out.println("		E-mail Address : "+courseArray.get(k).participantlist.get(j).participantEmail);
+								j++;
+							}
+							k++;
+							System.out.println(" ");
+						}
+						break;
+				case 8: value = false;
 						in.close();
 						try
 					      {
@@ -142,7 +263,7 @@ public class Coursemanagement{
 					         out.flush();
 					         out.close();
 					         fileOut.close();
-					         System.out.printf("Serialized data is saved in /tmp/employee.ser");
+					         System.out.println("Serialized data is saved in shorttermcoursemanagement.ser");
 					      }catch(IOException exe)
 					      {
 					          exe.printStackTrace();
