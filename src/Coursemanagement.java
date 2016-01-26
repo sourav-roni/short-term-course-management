@@ -16,18 +16,21 @@ import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 import java.lang.NullPointerException;
 
+//Here is the beginning of the main class
 @SuppressWarnings("unused")
 public class Coursemanagement{
 	public static Scanner in1;
+	public static ArrayList<Course> courseArray = new ArrayList<Course>(10);
 	@SuppressWarnings("unchecked")
+	//beginning of main method
 	public static void main(String []args) throws IOException,NullPointerException{
 		System.out.println("Hello!");
 		System.out.println("Welcome to IIT Kharagpur : Short Term Course Management");
 		in1 = new Scanner(System.in);
-		int choice;
+		int choice = 0;
 		boolean value = true;
 		//ArrayList<Course> courseArray = new ArrayList<Course>(10);
-		ArrayList<Course> courseArray = new ArrayList<Course>(10);
+		//a try and catch for reading from the file in which the earlier data was saved
 		try
 	      {
 	         FileInputStream fileIn = new FileInputStream("shorttermcoursemanagement");
@@ -37,25 +40,27 @@ public class Coursemanagement{
 				input.close();
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				//e1.printStackTrace();
 			}
 	         try {
 				fileIn.close();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				//e.printStackTrace();
 			}
 	      }catch(FileNotFoundException a)
 	      {
-	         System.out.println("OOPs!! File Not Found");
+	         //System.out.println("OOPs!! File Not Found");
 	      }catch(ClassNotFoundException c)
 	      {
-	         System.out.println("ArrayList<Course> class not found");
-	         c.printStackTrace();
+	         //System.out.println("ArrayList<Course> class not found");
+	         //c.printStackTrace();
 	         return;
 	      }
+		//defining a scanner for taking input from the user
 		Scanner in = new Scanner(System.in);
 		while(value){
+			//to display the user the various options available to him
 			System.out.println("Enter your choice:");
 			System.out.println("1-Create a new Course and display all Courses");
 			System.out.println("2-Create a new Faculty for a Course and display all its Instructors");
@@ -67,12 +72,34 @@ public class Coursemanagement{
 			System.out.println("8-Display all Courses Created in the past one year");
 			System.out.println("9-Display all Courses Created so far");
 			System.out.println("10-Save and exit\n");
-			choice = Integer.parseInt(in.nextLine());
+			try {
+				choice = Integer.parseInt(in.nextLine());
+			} catch (NumberFormatException e1) {
+				// TODO Auto-generated catch block
+				//e1.printStackTrace();
+			}
+			//beginning of switch cases to implement user choice
 			switch(choice){
-				case 1: if(courseArray.size()!=10){
+				case 1: if(courseArray.size()>=0){
 							Course c = new Course();
-							c.courseCreator();
-							courseArray.add(c);
+							boolean created = true;
+							created = c.courseCreator();
+							//checking whether the course can be added or not depending on the one year constraint 
+							if(created==true){
+								courseArray.add(c);
+							}
+							try
+						      {
+						         FileOutputStream fileOut = new FileOutputStream("shorttermcoursemanagement");
+						         ObjectOutputStream out = new ObjectOutputStream(fileOut);
+						         out.writeObject(courseArray);
+						         out.flush();
+						         out.close();
+						         fileOut.close();
+						      }catch(IOException exe)
+						      {
+						          //exe.printStackTrace();
+						      }
 							System.out.println("The following courses have been created so far:");
 							int i = 0;
 							while(i<courseArray.size()){
@@ -145,10 +172,23 @@ public class Coursemanagement{
 							var++;
 						}
 						if(var<courseArray.size()){
+							//checking whether new faculty can be added or not into the desired course
 							if(courseArray.get(var).facultylist.size()<5){
 								Faculty newFaculty = new Faculty();
 								newFaculty.facultyCreator();
 								courseArray.get(var).facultylist.add(newFaculty);
+								try
+							      {
+							         FileOutputStream fileOut = new FileOutputStream("shorttermcoursemanagement");
+							         ObjectOutputStream out = new ObjectOutputStream(fileOut);
+							         out.writeObject(courseArray);
+							         out.flush();
+							         out.close();
+							         fileOut.close();
+							      }catch(IOException exe)
+							      {
+							          //exe.printStackTrace();
+							      }
 								int p=0;
 								System.out.println("\nThe Course, "+facAdd+" has successfully added another Faculty");
 								System.out.println("The following Faculty are now Instructors for the Course "+facAdd);
@@ -163,11 +203,11 @@ public class Coursemanagement{
 								System.out.println(" ");
 							}
 							else{
-								System.out.println("Sorry. The Course already has 5 Instructors. Cannot add more.");
+								System.out.println("Sorry. The Course already has 5 Instructors. Cannot add more.\n");
 							}
 						}
 						else{
-							System.out.println("Sorry. Invalid Choice. ");
+							System.out.println("Sorry. Invalid Choice. \n");
 						}
 						break;
 				case 3: System.out.print("Please enter the Course for which you want to create new Participants : ");
@@ -179,25 +219,43 @@ public class Coursemanagement{
 								break;
 							}
 						}
-						if(courseArray.get(i).participantlist.size()<5){
-							Participant part = new Participant();
-							part.participantCreator();
-							courseArray.get(i).participantlist.add(part);
-							int j=0;
-							System.out.println("\nThe Course, "+courseChoice+" has successfully added another Participant");
-							System.out.println("The following Participants are now enrolled in the Course "+courseChoice);
-							while(j!=courseArray.get(i).participantlist.size()){
-								System.out.println("Partcipant Name : "+courseArray.get(i).participantlist.get(j).participantName);
-								System.out.println("	Address : "+courseArray.get(i).participantlist.get(j).participantAddress);
-								System.out.println("	Organisation : "+courseArray.get(i).participantlist.get(j).participantOrganisation);
-								System.out.println("	Mobile Number : "+courseArray.get(i).participantlist.get(j).participantMobile);
-								System.out.println("	E-mail Address : "+courseArray.get(i).participantlist.get(j).participantEmail);
-								j++;
+						if(i<courseArray.size()){
+							//checking whether new participant can be added or not into the desired course
+							if(courseArray.get(i).participantlist.size()<5){
+								Participant part = new Participant();
+								part.participantCreator();
+								courseArray.get(i).participantlist.add(part);
+								try
+							      {
+							         FileOutputStream fileOut = new FileOutputStream("shorttermcoursemanagement");
+							         ObjectOutputStream out = new ObjectOutputStream(fileOut);
+							         out.writeObject(courseArray);
+							         out.flush();
+							         out.close();
+							         fileOut.close();
+							      }catch(IOException exe)
+							      {
+							          //exe.printStackTrace();
+							      }
+								int j=0;
+								System.out.println("\nThe Course, "+courseChoice+" has successfully added another Participant");
+								System.out.println("The following Participants are now enrolled in the Course "+courseChoice);
+								while(j!=courseArray.get(i).participantlist.size()){
+									System.out.println("Partcipant Name : "+courseArray.get(i).participantlist.get(j).participantName);
+									System.out.println("	Address : "+courseArray.get(i).participantlist.get(j).participantAddress);
+									System.out.println("	Organisation : "+courseArray.get(i).participantlist.get(j).participantOrganisation);
+									System.out.println("	Mobile Number : "+courseArray.get(i).participantlist.get(j).participantMobile);
+									System.out.println("	E-mail Address : "+courseArray.get(i).participantlist.get(j).participantEmail);
+									j++;
+								}
+								System.out.println(" ");
 							}
-							System.out.println(" ");
+							else{
+								System.out.println("Sorry the Course is full, no more Participants can be created\n");
+							}
 						}
 						else{
-							System.out.println("Sorry the Course is full, no more Participants can be created\n");
+							System.out.println("Sorry. Invalid Choice.\n ");
 						}
 						break;
 				case 4: System.out.print("\nEnter the name of the Course which you want to alter : ");
@@ -211,7 +269,7 @@ public class Coursemanagement{
 							}
 							i++;
 						}
-						if(i!=courseArray.size()){
+						if(i<courseArray.size()){
 							System.out.print("Do you want to Delete the Course? [Y/N] : ");
 							in1.reset();
 							String deleteChoice = in1.nextLine();
@@ -229,7 +287,13 @@ public class Coursemanagement{
 									System.out.println("3-Edit Course Start Date");
 									System.out.println("4-Edit Course Duration");
 									System.out.println("5-Save and Exit Edit Mode");
-									int editChoice = Integer.parseInt(in1.nextLine());
+									int editChoice = 0;
+									try {
+										editChoice = Integer.parseInt(in1.nextLine());
+									} catch (NumberFormatException e) {
+										// TODO Auto-generated catch block
+										//e.printStackTrace();
+									}
 									switch(editChoice){
 										case 1: System.out.print("Enter the new Course Name for "+courseArray.get(i).courseName+" : ");
 												in.reset();
@@ -263,6 +327,21 @@ public class Coursemanagement{
 								}
 							}
 						}
+						else{
+							System.out.println("Sorry. Invalid Choice. \n");
+						}
+						try
+					      {
+					         FileOutputStream fileOut = new FileOutputStream("shorttermcoursemanagement");
+					         ObjectOutputStream out = new ObjectOutputStream(fileOut);
+					         out.writeObject(courseArray);
+					         out.flush();
+					         out.close();
+					         fileOut.close();
+					      }catch(IOException exe)
+					      {
+					          //exe.printStackTrace();
+					      }
 						break;
 				case 5: System.out.print("Enter the name of the Course whose Course Co-ordinator's details you want to alter : ");
 						String courseCoEdit = in.nextLine();
@@ -273,7 +352,7 @@ public class Coursemanagement{
 							}
 							d++;
 						}
-						if(d!=courseArray.size()){
+						if(d<courseArray.size()){
 							System.out.println("Entering Edit Mode...");
 							boolean coordinatorEdit = true;
 							while(coordinatorEdit){
@@ -284,7 +363,13 @@ public class Coursemanagement{
 								System.out.println("4-Change Mobile Number for "+courseArray.get(d).courseCoordinator.facultyName);
 								System.out.println("5-Change E-mail ID for "+courseArray.get(d).courseCoordinator.facultyName);
 								System.out.println("6-Save and Exit");
-								int userChoice = Integer.parseInt(in.nextLine());
+								int userChoice = 0;
+								try {
+									userChoice = Integer.parseInt(in.nextLine());
+								} catch (NumberFormatException e) {
+									// TODO Auto-generated catch block
+									//e.printStackTrace();
+								}
 								switch(userChoice){
 									case 1:	System.out.print("Enter new Name for "+courseArray.get(d).courseCoordinator.facultyName+" : ");
 											courseArray.get(d).courseCoordinator.facultyName = in.nextLine();
@@ -310,6 +395,21 @@ public class Coursemanagement{
 								}
 							}
 						}
+						else{
+							System.out.println("Sorry. Invalid Choice. \n");
+						}
+						try
+					      {
+					         FileOutputStream fileOut = new FileOutputStream("shorttermcoursemanagement");
+					         ObjectOutputStream out = new ObjectOutputStream(fileOut);
+					         out.writeObject(courseArray);
+					         out.flush();
+					         out.close();
+					         fileOut.close();
+					      }catch(IOException exe)
+					      {
+					          //exe.printStackTrace();
+					      }
 						break;
 				case 6: System.out.print("Enter the Name of the Course for which you want to Change the details of the Faculty : ");
 						String courseFacEdit = in.nextLine();
@@ -327,7 +427,7 @@ public class Coursemanagement{
 								for(var1=0;var1<courseArray.get(fac).facultylist.size();var1++){
 									System.out.println(courseArray.get(fac).facultylist.get(var1).facultyName);
 								}
-								System.out.println("Enter the name of the Faculty member whose Details are to be Edited : ");
+								System.out.print("Enter the name of the Faculty member whose Details are to be Edited : ");
 								String facChoice = in.nextLine();
 								var1=0;
 								while(var1<courseArray.get(fac).facultylist.size()){
@@ -347,7 +447,13 @@ public class Coursemanagement{
 										System.out.println("4-Change Mobile Number for "+courseArray.get(fac).facultylist.get(var1).facultyName);
 										System.out.println("5-Change E-mail Address for "+courseArray.get(fac).facultylist.get(var1).facultyName);
 										System.out.println("6-Save and Exit");
-										int facultyChoice = Integer.parseInt(in.nextLine());
+										int facultyChoice = 0;
+										try {
+											facultyChoice = Integer.parseInt(in.nextLine());
+										} catch (NumberFormatException e) {
+											// TODO Auto-generated catch block
+											//e.printStackTrace();
+										}
 										switch(facultyChoice){
 											case 1: System.out.print("Enter new Name for "+courseArray.get(fac).facultylist.get(var1).facultyName+" : ");
 													courseArray.get(fac).facultylist.get(var1).facultyName = in.nextLine();
@@ -374,13 +480,28 @@ public class Coursemanagement{
 									}
 								}
 								else{
-									System.out.println("Sorry. Invalid Entry.");
+									System.out.println("Sorry. Invalid Entry. \n");
 								}
 							}
 							else{
-								System.out.println("Sorry. The Course "+courseFacEdit+" has no Instructors yet. Please create Instructors first.");
+								System.out.println("Sorry. The Course "+courseFacEdit+" has no Instructors yet. Please create Instructors first.\n");
 							}
 						}
+						else{
+							System.out.println("Sorry. Invalid Choice. \n");
+						}
+						try
+					      {
+					         FileOutputStream fileOut = new FileOutputStream("shorttermcoursemanagement");
+					         ObjectOutputStream out = new ObjectOutputStream(fileOut);
+					         out.writeObject(courseArray);
+					         out.flush();
+					         out.close();
+					         fileOut.close();
+					      }catch(IOException exe)
+					      {
+					          //exe.printStackTrace();
+					      }
 						break;
 				case 7: System.out.print("Enter the Name of the Course for which you want to Change the details of the Participants : ");
 						String partEdit = in.nextLine();
@@ -398,7 +519,7 @@ public class Coursemanagement{
 								for(var1=0;var1<courseArray.get(part).participantlist.size();var1++){
 									System.out.println(courseArray.get(part).participantlist.get(var1).participantName);
 								}
-								System.out.println("Enter the name of the Participant whose Details are to be Edited : ");
+								System.out.print("Enter the name of the Participant whose Details are to be Edited : ");
 								String partChoice = in.nextLine();
 								var1=0;
 								while(var1<courseArray.get(part).participantlist.size()){
@@ -418,7 +539,13 @@ public class Coursemanagement{
 										System.out.println("4-Change Mobile Number for "+courseArray.get(part).participantlist.get(var1).participantName);
 										System.out.println("5-Change E-mail Address for "+courseArray.get(part).participantlist.get(var1).participantName);
 										System.out.println("6-Save and Exit");
-										int participantChoice = Integer.parseInt(in.nextLine());
+										int participantChoice = 0;
+										try {
+											participantChoice = Integer.parseInt(in.nextLine());
+										} catch (NumberFormatException e) {
+											// TODO Auto-generated catch block
+											//e.printStackTrace();
+										}
 										switch(participantChoice){
 											case 1: System.out.print("Enter new Name for "+courseArray.get(part).participantlist.get(var1).participantName+" : ");
 													courseArray.get(part).participantlist.get(var1).participantName = in.nextLine();
@@ -445,13 +572,28 @@ public class Coursemanagement{
 									}
 								}
 								else{
-									System.out.println("Sorry. Invalid Entry.");
+									System.out.println("Sorry. Invalid Entry.\n");
 								}
 							}
 							else{
-								System.out.println("Sorry. The Course "+partEdit+" has no Participants yet. Please create Participants first.");
+								System.out.println("Sorry. The Course "+partEdit+" has no Participants yet. Please create Participants first.\n");
 							}
 						}
+						else{
+							System.out.println("Sorry. Invalid Choice.\n ");
+						}
+						try
+					      {
+					         FileOutputStream fileOut = new FileOutputStream("shorttermcoursemanagement");
+					         ObjectOutputStream out = new ObjectOutputStream(fileOut);
+					         out.writeObject(courseArray);
+					         out.flush();
+					         out.close();
+					         fileOut.close();
+					      }catch(IOException exe)
+					      {
+					          //exe.printStackTrace();
+					      }
 						break;
 				case 8: boolean dateSelect = true;
 						SimpleDateFormat fdate = new SimpleDateFormat("dd/MM/yyyy");
@@ -569,7 +711,7 @@ public class Coursemanagement{
 							System.out.println(" ");
 						}
 						break;
-				case 10: value = false;
+				case 10:value = false;
 						in.close();
 						try
 					      {
@@ -583,7 +725,7 @@ public class Coursemanagement{
 					         System.out.println("Thank You");
 					      }catch(IOException exe)
 					      {
-					          exe.printStackTrace();
+					          //exe.printStackTrace();
 					      }
 						 break;
 				default: System.out.println("Invalid choice");
@@ -604,7 +746,7 @@ class Faculty implements java.io.Serializable{
 	String mobile;
 	String email;
 	transient private Scanner input;
-	
+	//function to create an instance of the class faculty
 	public void facultyCreator(){
 		input = new Scanner(System.in);
 		System.out.print("Enter the Name of the Faculty : ");
@@ -631,6 +773,7 @@ class Participant implements java.io.Serializable{
 	String participantOrganisation;
 	String participantEmail;
 	transient private Scanner input;
+	//function to create an instance of the class participant
 	public void participantCreator(){
 		input = new Scanner(System.in);
 		System.out.print("Enter the Name of the Participant : ");
@@ -665,7 +808,28 @@ class Course implements java.io.Serializable{
 	ArrayList<Faculty> facultylist = new ArrayList<Faculty>(5);
 	ArrayList<Participant> participantlist = new ArrayList<Participant>(5);
 	transient private Scanner in;
-	public void courseCreator() {
+	//this function has been created to check the one year constraint 
+	public boolean dateCompare(int userDate){
+		boolean decision = true;
+		int var1 = 0;
+		int count = 0;
+		while(var1<Coursemanagement.courseArray.size()){
+			//System.out.println(var1);
+			//System.out.println(	Coursemanagement.courseArray.get(var1).courseStartDate.get(Calendar.YEAR));
+			//System.out.println(userDate);
+			if(Coursemanagement.courseArray.get(var1).courseStartDate.get(Calendar.YEAR)==userDate){
+				count++;
+				//System.out.println(" " +count);
+				if(count==10){
+					return false;
+				}
+			}
+			var1++;
+		}
+		return decision;
+	}
+	//function to create an instance of the class course
+	public boolean courseCreator() {
 		in = new Scanner(System.in);
 		System.out.print("Enter the Name of the Course : ");
 		this.courseName = in.nextLine();
@@ -677,7 +841,22 @@ class Course implements java.io.Serializable{
 			this.startDate= in.nextLine();
 			try {
 				this.courseStartDate.setTime(datef.parse(this.startDate));
-				date = false;
+				//System.out.println("OhYes");
+				boolean decided = dateCompare(this.courseStartDate.get(Calendar.YEAR));
+				if(decided==true){
+					date = false;
+				}
+				else{
+					System.out.println("Already 10 Courses have been created for the same Year");
+					System.out.print("Would you like to create the course for another Year? [Y/N] : ");
+					String createChoice = in.nextLine();
+					if(createChoice.equalsIgnoreCase("Y")){
+						date = true;
+					}
+					else{
+						return false;
+					}
+				}
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block
 				System.out.println("Sorry. Incorrect Date Format. Please Enter Again.");
@@ -697,8 +876,14 @@ class Course implements java.io.Serializable{
 		System.out.print("Enter the e-mail address of the Faculty : ");
 		this.courseCoordinator.email = in.nextLine();
 		System.out.print("Course "+this.courseName+ " successfully created!!\n");
-		System.out.print("\nEnter the number of Faculty Members as Instructors for the Course\n");
-		this.instructorCount = in.nextInt();
+		System.out.print("\nEnter the number of Faculty Members as Instructors for the Course : ");
+		try {
+			this.instructorCount = Integer.parseInt(in.nextLine());
+		} catch (NumberFormatException e) {
+			System.out.println("Invalid Choice.");
+			// TODO Auto-generated catch block
+			//e.printStackTrace();
+		}
 		int count = this.instructorCount;
 		while(count!=0){
 			Faculty fac = new Faculty();
@@ -707,6 +892,7 @@ class Course implements java.io.Serializable{
 			count--;
 			System.out.println(" ");
 		}
+		return true;
 		//in.close();
 	}
 }
