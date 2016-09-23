@@ -14,6 +14,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.lang.NullPointerException;
 
 //Here is the beginning of the main class
@@ -21,10 +23,21 @@ import java.lang.NullPointerException;
 public class Coursemanagement{
 	public static Scanner in1;
 	public static ArrayList<Course> courseArray = new ArrayList<Course>(10);
+	public static boolean isStringLong(String s)
+	{
+	    try
+	    {
+	        Long.parseLong(s);
+	        return true;
+	    } catch (NumberFormatException ex)
+	    {
+	        return false;
+	    }
+	}
 	@SuppressWarnings("unchecked")
 	//beginning of main method
 	public static void main(String []args) throws IOException,NullPointerException{
-		System.out.println("Hello!");
+		System.out.println("\nHello!");
 		System.out.println("Welcome to IIT Kharagpur : Short Term Course Management");
 		in1 = new Scanner(System.in);
 		int choice = 0;
@@ -61,22 +74,24 @@ public class Coursemanagement{
 		Scanner in = new Scanner(System.in);
 		while(value){
 			//to display the user the various options available to him
-			System.out.println("Enter your choice:");
+			System.out.println("\nEnter your choice:");
 			System.out.println("1-Create a new Course and display all Courses");
-			System.out.println("2-Create a new Faculty for a Course and display all its Instructors");
-			System.out.println("3-Create a new Participant for a Course and display all its Registered Participants");
-			System.out.println("4-Alter details of Courses");
-			System.out.println("5-Alter details of Course Co-ordinator");
-			System.out.println("6-Alter details of Faculty");
-			System.out.println("7-Alter details of Participants");
-			System.out.println("8-Display all Courses Created in the past one year");
-			System.out.println("9-Display all Courses Created so far");
-			System.out.println("10-Save and exit\n");
+			System.out.println("2-Create a new Course Co-ordinator");
+			System.out.println("3-Create a new Faculty for a Course and display all its Instructors");
+			System.out.println("4-Create a new Participant for a Course and display all its Registered Participants");
+			System.out.println("5-Alter or Delete details of Courses");
+			System.out.println("6-Alter or Delete details of Course Co-ordinator");
+			System.out.println("7-Alter or Delete details of Faculty");
+			System.out.println("8-Alter or Delete details of Participants");
+			System.out.println("9-Display all Courses Created in the past one year");
+			System.out.println("10-Display all Courses Created so far");
+			System.out.println("11-Save and exit\n");
 			try {
 				choice = Integer.parseInt(in.nextLine());
 			} catch (NumberFormatException e1) {
 				// TODO Auto-generated catch block
 				//e1.printStackTrace();
+				choice = 100;
 			}
 			//beginning of switch cases to implement user choice
 			switch(choice){
@@ -108,11 +123,16 @@ public class Coursemanagement{
 								System.out.println("	Course Fee : "+courseArray.get(i).courseFee);
 								System.out.println("	Course Start Date : "+courseArray.get(i).startDate);
 								System.out.println("	Course Duration : "+courseArray.get(i).courseDuration);
-								System.out.println("\n	Course Co-ordinator : "+courseArray.get(i).courseCoordinator.facultyName);
-								System.out.println("		Department : "+courseArray.get(i).courseCoordinator.affiliatedDepartment);
-								System.out.println("		Address : "+courseArray.get(i).courseCoordinator.facultyAddress);
-								System.out.println("		Mobile Number : "+courseArray.get(i).courseCoordinator.mobile);
-								System.out.println("		E-mail : "+courseArray.get(i).courseCoordinator.email);
+								if(courseArray.get(i).courseCoordinatorStatus==1){
+									System.out.println("\n	Course Co-ordinator : "+courseArray.get(i).courseCoordinator.facultyName);
+									System.out.println("		Department : "+courseArray.get(i).courseCoordinator.affiliatedDepartment);
+									System.out.println("		Address : "+courseArray.get(i).courseCoordinator.facultyAddress);
+									System.out.println("		Mobile Number : "+courseArray.get(i).courseCoordinator.mobile);
+									System.out.println("		E-mail : "+courseArray.get(i).courseCoordinator.email);
+								}
+								if(courseArray.get(i).courseCoordinatorStatus==0){
+									System.out.println("\n	The Course does not have a Course Co-ordinator.");
+								}
 								int j = 0;
 								if(courseArray.get(i).facultylist.size()>0){
 									System.out.println("	The course, "+courseArray.get(i).courseName+" has the following Faculty Members as Instructors");
@@ -139,11 +159,16 @@ public class Coursemanagement{
 								System.out.println("	Course Fee : "+courseArray.get(i).courseFee);
 								System.out.println("	Course Start Date : "+courseArray.get(i).startDate);
 								System.out.println("	Course Duration : "+courseArray.get(i).courseDuration);
-								System.out.println("\n	Course Co-ordinator : "+courseArray.get(i).courseCoordinator.facultyName);
-								System.out.println("		Department : "+courseArray.get(i).courseCoordinator.affiliatedDepartment);
-								System.out.println("		Address : "+courseArray.get(i).courseCoordinator.facultyAddress);
-								System.out.println("		Mobile Number : "+courseArray.get(i).courseCoordinator.mobile);
-								System.out.println("		E-mail : "+courseArray.get(i).courseCoordinator.email);
+								if(courseArray.get(i).courseCoordinatorStatus==1){
+									System.out.println("\n	Course Co-ordinator : "+courseArray.get(i).courseCoordinator.facultyName);
+									System.out.println("		Department : "+courseArray.get(i).courseCoordinator.affiliatedDepartment);
+									System.out.println("		Address : "+courseArray.get(i).courseCoordinator.facultyAddress);
+									System.out.println("		Mobile Number : "+courseArray.get(i).courseCoordinator.mobile);
+									System.out.println("		E-mail : "+courseArray.get(i).courseCoordinator.email);
+								}
+								if(courseArray.get(i).courseCoordinatorStatus==0){
+									System.out.println("\n	The Course does not have a Course Co-ordinator.");
+								}
 								int j = 0;
 								if(courseArray.get(i).facultylist.size()>0){
 									System.out.println("	The course, "+courseArray.get(i).courseName+" has the following Faculty Members as Instructors");
@@ -162,7 +187,50 @@ public class Coursemanagement{
 							System.out.println("Sorry. No more Courses can be created\n");
 						}
 						break;
-				case 2: System.out.print("Enter the Course for which you want to add Faculty Members : ");
+				case 2: System.out.print("Enter the Course for which you want to add a new Course Co-ordinator : ");
+						String addCourseCoordinator = in.nextLine();
+						int addSearch = 0;
+						while(addSearch<courseArray.size()){
+							if(courseArray.get(addSearch).courseName.equals(addCourseCoordinator)==true){
+								break;
+							}
+							addSearch++;
+						}
+						if(addSearch<courseArray.size()){
+							if(courseArray.get(addSearch).courseCoordinatorStatus==1){
+								System.out.println("Sorry. The Course "+courseArray.get(addSearch).courseName+" already has a Course Co-ordinator");
+							}
+							else{
+								System.out.print("Enter the name of the Course Co-ordinator : ");
+								courseArray.get(addSearch).courseCoordinator.facultyName = in.nextLine();
+								System.out.print("Enter the affiliated Department :");
+								courseArray.get(addSearch).courseCoordinator.affiliatedDepartment = in.nextLine();
+								System.out.print("Enter the address of the Course Co-ordinator : ");
+								courseArray.get(addSearch).courseCoordinator.facultyAddress = in.nextLine();
+								boolean mobileNumber = true;
+								while(mobileNumber){
+									System.out.print("Enter the mobile number of the Course Co-ordinator : ");
+									courseArray.get(addSearch).courseCoordinator.mobile = in.nextLine();
+									if(isStringLong(courseArray.get(addSearch).courseCoordinator.mobile)==true){
+										mobileNumber = false;
+									}
+									else{
+										System.out.println("Sorry. Invalid Entry. ");
+									}
+								}
+								//System.out.print("Enter the mobile number of the Course Co-ordinator : ");
+								//courseArray.get(addSearch).courseCoordinator.mobile = in.nextLine();
+								System.out.print("Enter the e-mail address of the Course Co-ordinator : ");
+								courseArray.get(addSearch).courseCoordinator.email = in.nextLine();
+								System.out.println("Course Co-ordinator has been successfully created!!");
+								courseArray.get(addSearch).courseCoordinatorStatus = 1;
+							}
+						}
+						else{
+							System.out.println("Sorry. Invalid Choice. \n");
+						}
+						break;
+				case 3: System.out.print("Enter the Course for which you want to add Faculty Members : ");
 						String facAdd = in.nextLine();
 						int var =0;
 						while(var<courseArray.size()){
@@ -210,7 +278,7 @@ public class Coursemanagement{
 							System.out.println("Sorry. Invalid Choice. \n");
 						}
 						break;
-				case 3: System.out.print("Please enter the Course for which you want to create new Participants : ");
+				case 4: System.out.print("Please enter the Course for which you want to create new Participants : ");
 						String courseChoice = in1.nextLine();
 						int i = 0;
 						for(i=0;i<courseArray.size();i++){
@@ -258,7 +326,7 @@ public class Coursemanagement{
 							System.out.println("Sorry. Invalid Choice.\n ");
 						}
 						break;
-				case 4: System.out.print("\nEnter the name of the Course which you want to alter : ");
+				case 5: System.out.print("\nEnter the name of the Course which you want to Alter or Delete : ");
 						in.reset();
 						in1.reset();
 						String courseChoose = in1.nextLine();
@@ -281,7 +349,7 @@ public class Coursemanagement{
 								System.out.println("Entering into Course Alter Mode...");
 								boolean select = true;
 								while(select){
-									System.out.println("Please Enter your choices for editing the selected Course : ");
+									System.out.println("\nPlease Enter your choices for editing the selected Course : ");
 									System.out.println("1-Edit Course Name");
 									System.out.println("2-Edit Course Fees");
 									System.out.println("3-Edit Course Start Date");
@@ -293,6 +361,7 @@ public class Coursemanagement{
 									} catch (NumberFormatException e) {
 										// TODO Auto-generated catch block
 										//e.printStackTrace();
+										editChoice = 100;
 									}
 									switch(editChoice){
 										case 1: System.out.print("Enter the new Course Name for "+courseArray.get(i).courseName+" : ");
@@ -307,10 +376,48 @@ public class Coursemanagement{
 												//String newCourseFees = in.nextLine();
 												courseArray.get(i).courseFee = in.nextLine();
 												break;
-										case 3: System.out.print("Enter the new Start Date for "+courseArray.get(i).courseName+" : ");
-												in.reset();
-												//String newStartDate = in.nextLine();
-												courseArray.get(i).startDate = in.nextLine();
+										case 3: boolean date = true;
+												SimpleDateFormat datef = new SimpleDateFormat("dd/MM/yyyy");
+												while(date){
+													System.out.print("Enter the new Start Date for "+courseArray.get(i).courseName+" : ");
+													in.reset();
+													//String newStartDate = in.nextLine();
+													courseArray.get(i).startDate = in.nextLine();
+													try {
+														courseArray.get(i).courseStartDate.setTime(datef.parse(courseArray.get(i).startDate));
+														//System.out.println("OhYes");
+														int var1 = 0;
+														int count = 0;
+														//boolean decided = dateCompare(courseArray.get(i).courseStartDate.get(Calendar.YEAR));
+														while(var1<courseArray.size()){
+															if(courseArray.get(var1).courseStartDate.get(Calendar.YEAR)==courseArray.get(i).courseStartDate.get(Calendar.YEAR)){
+																count++;
+																if(count==10){
+																	break;
+																}
+															}
+															var1++;
+														}
+														if(count<10){
+															date = false;
+														}
+														else{
+															System.out.println("Already 10 Courses have been created for the same Year");
+															System.out.print("Would you like to create the course for another Year? [Y/N] : ");
+															String createChoice = in.nextLine();
+															if(createChoice.equalsIgnoreCase("Y")){
+																date = true;
+															}
+															else{
+																date = false;
+															}
+														}
+													} catch (ParseException e) {
+														// TODO Auto-generated catch block
+														System.out.println("Sorry. Incorrect Date Format. Please Enter Again.");
+														//e.printStackTrace();
+													}
+												}
 												break;
 										case 4: System.out.print("Enter the revised Course Duration for "+courseArray.get(i).courseName+" : ");
 												in.reset();
@@ -343,7 +450,7 @@ public class Coursemanagement{
 					          //exe.printStackTrace();
 					      }
 						break;
-				case 5: System.out.print("Enter the name of the Course whose Course Co-ordinator's details you want to alter : ");
+				case 6: System.out.print("Enter the name of the Course whose Course Co-ordinator's details you want to Alter or Delete : ");
 						String courseCoEdit = in.nextLine();
 						int d = 0;
 						while(d<courseArray.size()){
@@ -353,45 +460,72 @@ public class Coursemanagement{
 							d++;
 						}
 						if(d<courseArray.size()){
-							System.out.println("Entering Edit Mode...");
-							boolean coordinatorEdit = true;
-							while(coordinatorEdit){
-								System.out.println("Please Enter your Choice");
-								System.out.println("1-Change Name of "+courseArray.get(d).courseCoordinator.facultyName);
-								System.out.println("2-Change Department for "+courseArray.get(d).courseCoordinator.facultyName);
-								System.out.println("3-Change Address for "+courseArray.get(d).courseCoordinator.facultyName);
-								System.out.println("4-Change Mobile Number for "+courseArray.get(d).courseCoordinator.facultyName);
-								System.out.println("5-Change E-mail ID for "+courseArray.get(d).courseCoordinator.facultyName);
-								System.out.println("6-Save and Exit");
-								int userChoice = 0;
-								try {
-									userChoice = Integer.parseInt(in.nextLine());
-								} catch (NumberFormatException e) {
-									// TODO Auto-generated catch block
-									//e.printStackTrace();
-								}
-								switch(userChoice){
-									case 1:	System.out.print("Enter new Name for "+courseArray.get(d).courseCoordinator.facultyName+" : ");
-											courseArray.get(d).courseCoordinator.facultyName = in.nextLine();
-											break;
-									case 2:	System.out.print("Enter new Department for "+courseArray.get(d).courseCoordinator.facultyName+" : ");
-											courseArray.get(d).courseCoordinator.affiliatedDepartment = in.nextLine();
-											break;
-									case 3:	System.out.print("Enter new Address for "+courseArray.get(d).courseCoordinator.facultyName+" : ");
-											courseArray.get(d).courseCoordinator.facultyAddress = in.nextLine();
-											break;
-									case 4:	System.out.print("Enter new Mobile Number for "+courseArray.get(d).courseCoordinator.facultyName+" : ");
-											courseArray.get(d).courseCoordinator.mobile = in.nextLine();
-											break;
-									case 5:	System.out.print("Enter new E-mail Address for "+courseArray.get(d).courseCoordinator.facultyName+" : ");
-											courseArray.get(d).courseCoordinator.email = in.nextLine();
-											break;
-									case 6:	System.out.println("All changes successfully Saved");
-											System.out.println("Exiting Editing Mode...");
-											coordinatorEdit = false;
-											break;
-									default: System.out.println("Invalid Choice. Please Try Again. ");
-											 break;
+							System.out.println("The Course "+courseCoEdit+" has "+courseArray.get(d).courseCoordinator.facultyName+" as the Course Co-ordinator");
+							System.out.print("Do you want to Delete the Course Co-ordinator? [Y/N] : ");
+							in1.reset();
+							String deleteChoice = in1.nextLine();
+							if(deleteChoice.equals("Y")==true||deleteChoice.equals("y")==true){
+								courseArray.get(d).courseCoordinatorStatus = 0;
+								courseArray.get(d).courseCoordinator.facultyName = "--------";
+								courseArray.get(d).courseCoordinator.affiliatedDepartment = "--------";
+								courseArray.get(d).courseCoordinator.facultyAddress = "--------";
+								courseArray.get(d).courseCoordinator.mobile = "--------";
+								courseArray.get(d).courseCoordinator.email = "--------";
+								System.out.println("The Course Co-ordinator for "+courseCoEdit+" has been successfully deleted");
+							}
+							else{
+								System.out.println("Entering Edit Mode...");
+								boolean coordinatorEdit = true;
+								while(coordinatorEdit){
+									System.out.println("\nPlease Enter your Choice");
+									System.out.println("1-Change Name of "+courseArray.get(d).courseCoordinator.facultyName);
+									System.out.println("2-Change Department for "+courseArray.get(d).courseCoordinator.facultyName);
+									System.out.println("3-Change Address for "+courseArray.get(d).courseCoordinator.facultyName);
+									System.out.println("4-Change Mobile Number for "+courseArray.get(d).courseCoordinator.facultyName);
+									System.out.println("5-Change E-mail ID for "+courseArray.get(d).courseCoordinator.facultyName);
+									System.out.println("6-Save and Exit");
+									int userChoice = 0;
+									try {
+										userChoice = Integer.parseInt(in.nextLine());
+									} catch (NumberFormatException e) {
+										// TODO Auto-generated catch block
+										//e.printStackTrace();
+										userChoice = 100;
+									}
+									switch(userChoice){
+										case 1:	System.out.print("Enter new Name for "+courseArray.get(d).courseCoordinator.facultyName+" : ");
+												courseArray.get(d).courseCoordinator.facultyName = in.nextLine();
+												break;
+										case 2:	System.out.print("Enter new Department for "+courseArray.get(d).courseCoordinator.facultyName+" : ");
+												courseArray.get(d).courseCoordinator.affiliatedDepartment = in.nextLine();
+												break;
+										case 3:	System.out.print("Enter new Address for "+courseArray.get(d).courseCoordinator.facultyName+" : ");
+												courseArray.get(d).courseCoordinator.facultyAddress = in.nextLine();
+												break;
+										case 4: boolean mobileNumber = true;
+												while(mobileNumber){
+													System.out.print("Enter new Mobile Number for "+courseArray.get(d).courseCoordinator.facultyName+" : ");
+													courseArray.get(d).courseCoordinator.mobile = in.nextLine();
+													if(isStringLong(courseArray.get(d).courseCoordinator.mobile)==true){
+														mobileNumber = false;
+													}
+													else{
+														System.out.println("Sorry. Invalid Entry. ");
+													}
+												}
+												//System.out.print("Enter new Mobile Number for "+courseArray.get(d).courseCoordinator.facultyName+" : ");
+												//courseArray.get(d).courseCoordinator.mobile = in.nextLine();
+												break;
+										case 5:	System.out.print("Enter new E-mail Address for "+courseArray.get(d).courseCoordinator.facultyName+" : ");
+												courseArray.get(d).courseCoordinator.email = in.nextLine();
+												break;
+										case 6:	System.out.println("All changes successfully Saved");
+												System.out.println("Exiting Editing Mode...");
+												coordinatorEdit = false;
+												break;
+										default: System.out.println("Invalid Choice. Please Try Again. ");
+												 break;
+									}
 								}
 							}
 						}
@@ -411,7 +545,7 @@ public class Coursemanagement{
 					          //exe.printStackTrace();
 					      }
 						break;
-				case 6: System.out.print("Enter the Name of the Course for which you want to Change the details of the Faculty : ");
+				case 7: System.out.print("Enter the Name of the Course for which you want to Change the details of the Faculty : ");
 						String courseFacEdit = in.nextLine();
 						int fac = 0;
 						while(fac<courseArray.size()){
@@ -437,47 +571,68 @@ public class Coursemanagement{
 									var1++;
 								}
 								if(var1<courseArray.get(fac).facultylist.size()){
-									System.out.println("Entering Edit Mode...");
-									boolean facAlter = true ;
-									while(facAlter){
-										System.out.println("Please Enter your Choice:");
-										System.out.println("1-Change Name of "+courseArray.get(fac).facultylist.get(var1).facultyName);
-										System.out.println("2-Change Department for "+courseArray.get(fac).facultylist.get(var1).facultyName);
-										System.out.println("3-Change Address of "+courseArray.get(fac).facultylist.get(var1).facultyName);
-										System.out.println("4-Change Mobile Number for "+courseArray.get(fac).facultylist.get(var1).facultyName);
-										System.out.println("5-Change E-mail Address for "+courseArray.get(fac).facultylist.get(var1).facultyName);
-										System.out.println("6-Save and Exit");
-										int facultyChoice = 0;
-										try {
-											facultyChoice = Integer.parseInt(in.nextLine());
-										} catch (NumberFormatException e) {
-											// TODO Auto-generated catch block
-											//e.printStackTrace();
-										}
-										switch(facultyChoice){
-											case 1: System.out.print("Enter new Name for "+courseArray.get(fac).facultylist.get(var1).facultyName+" : ");
-													courseArray.get(fac).facultylist.get(var1).facultyName = in.nextLine();
-													break;
-											case 2: System.out.print("Enter new Department for "+courseArray.get(fac).facultylist.get(var1).facultyName+" : ");
-													courseArray.get(fac).facultylist.get(var1).affiliatedDepartment = in.nextLine();
-													break;
-											case 3: System.out.print("Enter new Address for "+courseArray.get(fac).facultylist.get(var1).facultyName+" : ");
-													courseArray.get(fac).facultylist.get(var1).facultyAddress = in.nextLine();
-													break;
-											case 4: System.out.print("Enter new Mobile Number for "+courseArray.get(fac).facultylist.get(var1).facultyName+" : ");
-													courseArray.get(fac).facultylist.get(var1).mobile = in.nextLine();
-													break;
-											case 5: System.out.print("Enter new E-mail Address for "+courseArray.get(fac).facultylist.get(var1).facultyName+" : ");
-													courseArray.get(fac).facultylist.get(var1).email = in.nextLine();
-													break;
-											case 6: System.out.println("All Changes Successfully Saved");
-													System.out.println("Exiting Edit Mode ");
-													facAlter = false;
-													break;
-											default: System.out.println("Sorry. Invalid Choice. Try Again. ");
-													break;
-										}
+									System.out.print("Do you want to Delete the Faculty? [Y/N] : ");
+									in1.reset();
+									String deleteChoice = in1.nextLine();
+									if(deleteChoice.equals("Y")==true||deleteChoice.equals("y")==true){
+										courseArray.get(fac).facultylist.remove(var1);
+										System.out.println("The Faculty "+facChoice+" has been successfully deleted");
 									}
+									else{
+										System.out.println("Entering Edit Mode...");
+										boolean facAlter = true ;
+										while(facAlter){
+											System.out.println("\nPlease Enter your Choice:");
+											System.out.println("1-Change Name of "+courseArray.get(fac).facultylist.get(var1).facultyName);
+											System.out.println("2-Change Department for "+courseArray.get(fac).facultylist.get(var1).facultyName);
+											System.out.println("3-Change Address of "+courseArray.get(fac).facultylist.get(var1).facultyName);
+											System.out.println("4-Change Mobile Number for "+courseArray.get(fac).facultylist.get(var1).facultyName);
+											System.out.println("5-Change E-mail Address for "+courseArray.get(fac).facultylist.get(var1).facultyName);
+											System.out.println("6-Save and Exit");
+											int facultyChoice = 0;
+											try {
+												facultyChoice = Integer.parseInt(in.nextLine());
+											} catch (NumberFormatException e) {
+												// TODO Auto-generated catch block
+												//e.printStackTrace();
+												facultyChoice = 100;
+											}
+											switch(facultyChoice){
+												case 1: System.out.print("Enter new Name for "+courseArray.get(fac).facultylist.get(var1).facultyName+" : ");
+														courseArray.get(fac).facultylist.get(var1).facultyName = in.nextLine();
+														break;
+												case 2: System.out.print("Enter new Department for "+courseArray.get(fac).facultylist.get(var1).facultyName+" : ");
+														courseArray.get(fac).facultylist.get(var1).affiliatedDepartment = in.nextLine();
+														break;
+												case 3: System.out.print("Enter new Address for "+courseArray.get(fac).facultylist.get(var1).facultyName+" : ");
+														courseArray.get(fac).facultylist.get(var1).facultyAddress = in.nextLine();
+														break;
+												case 4: boolean mobileNumber = true;
+														while(mobileNumber){
+															System.out.print("Enter new Mobile Number for "+courseArray.get(fac).facultylist.get(var1).facultyName+" : ");
+															courseArray.get(fac).facultylist.get(var1).mobile = in.nextLine();
+															if(isStringLong(courseArray.get(fac).facultylist.get(var1).mobile)==true){
+																mobileNumber = false;
+															}
+															else{
+																System.out.println("Sorry. Invalid Entry. ");
+															}
+														}
+														//System.out.print("Enter new Mobile Number for "+courseArray.get(fac).facultylist.get(var1).facultyName+" : ");
+														//courseArray.get(fac).facultylist.get(var1).mobile = in.nextLine();
+														break;
+												case 5: System.out.print("Enter new E-mail Address for "+courseArray.get(fac).facultylist.get(var1).facultyName+" : ");
+														courseArray.get(fac).facultylist.get(var1).email = in.nextLine();
+														break;
+												case 6: System.out.println("All Changes Successfully Saved");
+														System.out.println("Exiting Edit Mode ");
+														facAlter = false;
+														break;
+												default: System.out.println("Sorry. Invalid Choice. Try Again. ");
+														break;
+											}
+										}
+									}	
 								}
 								else{
 									System.out.println("Sorry. Invalid Entry. \n");
@@ -503,7 +658,7 @@ public class Coursemanagement{
 					          //exe.printStackTrace();
 					      }
 						break;
-				case 7: System.out.print("Enter the Name of the Course for which you want to Change the details of the Participants : ");
+				case 8: System.out.print("Enter the Name of the Course for which you want to Change the details of the Participants or Delete them : ");
 						String partEdit = in.nextLine();
 						int part = 0;
 						while(part<courseArray.size()){
@@ -529,45 +684,66 @@ public class Coursemanagement{
 									var1++;
 								}
 								if(var1<courseArray.get(part).participantlist.size()){
-									System.out.println("Entering Edit Mode...");
-									boolean partAlter = true ;
-									while(partAlter){
-										System.out.println("Please Enter your Choice:");
-										System.out.println("1-Change Name of "+courseArray.get(part).participantlist.get(var1).participantName);
-										System.out.println("2-Change Organisation for "+courseArray.get(part).participantlist.get(var1).participantName);
-										System.out.println("3-Change Address of "+courseArray.get(part).participantlist.get(var1).participantName);
-										System.out.println("4-Change Mobile Number for "+courseArray.get(part).participantlist.get(var1).participantName);
-										System.out.println("5-Change E-mail Address for "+courseArray.get(part).participantlist.get(var1).participantName);
-										System.out.println("6-Save and Exit");
-										int participantChoice = 0;
-										try {
-											participantChoice = Integer.parseInt(in.nextLine());
-										} catch (NumberFormatException e) {
-											// TODO Auto-generated catch block
-											//e.printStackTrace();
-										}
-										switch(participantChoice){
-											case 1: System.out.print("Enter new Name for "+courseArray.get(part).participantlist.get(var1).participantName+" : ");
-													courseArray.get(part).participantlist.get(var1).participantName = in.nextLine();
-													break;
-											case 2: System.out.print("Enter new Organisation for "+courseArray.get(part).participantlist.get(var1).participantName+" : ");
-													courseArray.get(part).participantlist.get(var1).participantOrganisation = in.nextLine();
-													break;
-											case 3: System.out.print("Enter new Address for "+courseArray.get(part).participantlist.get(var1).participantName+" : ");
-													courseArray.get(part).participantlist.get(var1).participantAddress = in.nextLine();
-													break;
-											case 4: System.out.print("Enter new Mobile Number for "+courseArray.get(part).participantlist.get(var1).participantName+" : ");
-													courseArray.get(part).participantlist.get(var1).participantMobile = in.nextLine();
-													break;
-											case 5: System.out.print("Enter new E-mail Address for "+courseArray.get(part).participantlist.get(var1).participantName+" : ");
-													courseArray.get(part).participantlist.get(var1).participantEmail = in.nextLine();
-													break;
-											case 6: System.out.println("All Changes Successfully Saved");
-													System.out.println("Exiting Edit Mode ");
-													partAlter = false;
-													break;
-											default: System.out.println("Sorry. Invalid Choice. Try Again. ");
-													break;
+									System.out.print("Do you want to Delete the Participant? [Y/N] : ");
+									in1.reset();
+									String deleteChoice = in1.nextLine();
+									if(deleteChoice.equals("Y")==true||deleteChoice.equals("y")==true){
+										courseArray.get(part).participantlist.remove(var1);
+										System.out.println("The Participant "+partChoice+" has been successfully deleted");
+									}
+									else{
+										System.out.println("Entering Edit Mode...");
+										boolean partAlter = true ;
+										while(partAlter){
+											System.out.println("\nPlease Enter your Choice:");
+											System.out.println("1-Change Name of "+courseArray.get(part).participantlist.get(var1).participantName);
+											System.out.println("2-Change Organisation for "+courseArray.get(part).participantlist.get(var1).participantName);
+											System.out.println("3-Change Address of "+courseArray.get(part).participantlist.get(var1).participantName);
+											System.out.println("4-Change Mobile Number for "+courseArray.get(part).participantlist.get(var1).participantName);
+											System.out.println("5-Change E-mail Address for "+courseArray.get(part).participantlist.get(var1).participantName);
+											System.out.println("6-Save and Exit");
+											int participantChoice = 0;
+											try {
+												participantChoice = Integer.parseInt(in.nextLine());
+											} catch (NumberFormatException e) {
+												// TODO Auto-generated catch block
+												//e.printStackTrace();
+												participantChoice = 100;
+											}
+											switch(participantChoice){
+												case 1: System.out.print("Enter new Name for "+courseArray.get(part).participantlist.get(var1).participantName+" : ");
+														courseArray.get(part).participantlist.get(var1).participantName = in.nextLine();
+														break;
+												case 2: System.out.print("Enter new Organisation for "+courseArray.get(part).participantlist.get(var1).participantName+" : ");
+														courseArray.get(part).participantlist.get(var1).participantOrganisation = in.nextLine();
+														break;
+												case 3: System.out.print("Enter new Address for "+courseArray.get(part).participantlist.get(var1).participantName+" : ");
+														courseArray.get(part).participantlist.get(var1).participantAddress = in.nextLine();
+														break;
+												case 4: boolean mobileNumber = true;
+														while(mobileNumber){
+															System.out.print("Enter new Mobile Number for "+courseArray.get(part).participantlist.get(var1).participantName+" : ");
+															courseArray.get(part).participantlist.get(var1).participantMobile = in.nextLine();
+															if(isStringLong(courseArray.get(part).participantlist.get(var1).participantMobile)==true){
+																mobileNumber = false;
+															}
+															else{
+																System.out.println("Sorry. Invalid Entry. ");
+															}
+														}
+														//System.out.print("Enter new Mobile Number for "+courseArray.get(part).participantlist.get(var1).participantName+" : ");
+														//courseArray.get(part).participantlist.get(var1).participantMobile = in.nextLine();
+														break;
+												case 5: System.out.print("Enter new E-mail Address for "+courseArray.get(part).participantlist.get(var1).participantName+" : ");
+														courseArray.get(part).participantlist.get(var1).participantEmail = in.nextLine();
+														break;
+												case 6: System.out.println("All Changes Successfully Saved");
+														System.out.println("Exiting Edit Mode ");
+														partAlter = false;
+														break;
+												default: System.out.println("Sorry. Invalid Choice. Try Again. ");
+														break;
+											}
 										}
 									}
 								}
@@ -595,7 +771,7 @@ public class Coursemanagement{
 					          //exe.printStackTrace();
 					      }
 						break;
-				case 8: boolean dateSelect = true;
+				case 9: boolean dateSelect = true;
 						SimpleDateFormat fdate = new SimpleDateFormat("dd/MM/yyyy");
 						Calendar calendar = Calendar.getInstance();
 						while(dateSelect){
@@ -632,11 +808,16 @@ public class Coursemanagement{
 								System.out.println("	Course Fees: "+courseArray.get(m).courseFee);
 								System.out.println("	Course Start Date: "+courseArray.get(m).startDate);
 								System.out.println("	Course Duration: "+courseArray.get(m).courseDuration);
-								System.out.println("	Course Co-ordinator : "+courseArray.get(m).courseCoordinator.facultyName);
-								System.out.println("		Department : "+courseArray.get(m).courseCoordinator.affiliatedDepartment);
-								System.out.println("		Address : "+courseArray.get(m).courseCoordinator.facultyAddress);
-								System.out.println("		Mobile Number : "+courseArray.get(m).courseCoordinator.mobile);
-								System.out.println("		E-mail : "+courseArray.get(m).courseCoordinator.email);
+								if(courseArray.get(m).courseCoordinatorStatus==1){
+									System.out.println("\n	Course Co-ordinator : "+courseArray.get(m).courseCoordinator.facultyName);
+									System.out.println("		Department : "+courseArray.get(m).courseCoordinator.affiliatedDepartment);
+									System.out.println("		Address : "+courseArray.get(m).courseCoordinator.facultyAddress);
+									System.out.println("		Mobile Number : "+courseArray.get(m).courseCoordinator.mobile);
+									System.out.println("		E-mail : "+courseArray.get(m).courseCoordinator.email);
+								}
+								if(courseArray.get(m).courseCoordinatorStatus==0){
+									System.out.println("\n	The Course does not have a Course Co-ordinator.");
+								}
 								int j = 0;
 								if(courseArray.get(m).facultylist.size()>0){
 									System.out.println("	The course, "+courseArray.get(m).courseName+" has the following Faculty Members as Instructors");
@@ -670,7 +851,12 @@ public class Coursemanagement{
 							System.out.println("Sorry. No Courses were created during the past one year.\n");
 						}
 						break;
-				case 9: System.out.println("The following courses have been created so far:");
+				case 10:if(courseArray.size()>0){
+							System.out.println("The following courses have been created so far:");
+						}
+						else{
+							System.out.println("There are no Courses to Display.\n");
+						}
 						int k = 0;
 						while(k<courseArray.size()){
 							System.out.println("Serial Number :"+(k+1));
@@ -678,11 +864,16 @@ public class Coursemanagement{
 							System.out.println("	Course Fee : "+courseArray.get(k).courseFee);
 							System.out.println("	Course Start Date : "+courseArray.get(k).startDate);
 							System.out.println("	Course Duration : "+courseArray.get(k).courseDuration);
-							System.out.println("\n	Course Co-ordinator : "+courseArray.get(k).courseCoordinator.facultyName);
-							System.out.println("		Department : "+courseArray.get(k).courseCoordinator.affiliatedDepartment);
-							System.out.println("		Address : "+courseArray.get(k).courseCoordinator.facultyAddress);
-							System.out.println("		Mobile Number : "+courseArray.get(k).courseCoordinator.mobile);
-							System.out.println("		E-mail : "+courseArray.get(k).courseCoordinator.email);
+							if(courseArray.get(k).courseCoordinatorStatus==1){
+								System.out.println("\n	Course Co-ordinator : "+courseArray.get(k).courseCoordinator.facultyName);
+								System.out.println("		Department : "+courseArray.get(k).courseCoordinator.affiliatedDepartment);
+								System.out.println("		Address : "+courseArray.get(k).courseCoordinator.facultyAddress);
+								System.out.println("		Mobile Number : "+courseArray.get(k).courseCoordinator.mobile);
+								System.out.println("		E-mail : "+courseArray.get(k).courseCoordinator.email);
+							}
+							if(courseArray.get(k).courseCoordinatorStatus==0){
+								System.out.println("\n	The Course does not have a Course Co-ordinator.");
+							}
 							int j = 0;
 							if(courseArray.get(k).facultylist.size()>0){
 								System.out.println("	The course, "+courseArray.get(k).courseName+" has the following Faculty Members as Instructors");
@@ -711,7 +902,7 @@ public class Coursemanagement{
 							System.out.println(" ");
 						}
 						break;
-				case 10:value = false;
+				case 11:value = false;
 						in.close();
 						try
 					      {
@@ -745,7 +936,20 @@ class Faculty implements java.io.Serializable{
 	String facultyAddress;
 	String mobile;
 	String email;
+	String regex = "[0-9]";
+	Pattern pattern = Pattern.compile(regex);
 	transient private Scanner input;
+	public boolean isStringLong(String s)
+	{
+	    try
+	    {
+	        Long.parseLong(s);
+	        return true;
+	    } catch (NumberFormatException ex)
+	    {
+	        return false;
+	    }
+	}
 	//function to create an instance of the class faculty
 	public void facultyCreator(){
 		input = new Scanner(System.in);
@@ -755,8 +959,19 @@ class Faculty implements java.io.Serializable{
 		this.affiliatedDepartment = input.nextLine();
 		System.out.print("Enter the address of the Faculty : ");
 		this.facultyAddress = input.nextLine();
-		System.out.print("Enter the mobile number of the Faculty : ");
-		this.mobile = input.nextLine();
+		//System.out.print("Enter the mobile number of the Faculty : ");
+		//this.mobile = input.nextLine();
+		boolean mobileNum = true;
+		while(mobileNum){
+			System.out.print("Enter the mobile number of the Faculty : ");
+			this.mobile = input.nextLine();
+			if(isStringLong(this.mobile)==true){
+				mobileNum = false;
+			}
+			else{
+				System.out.println("Sorry. Invalid Entry. ");
+			}
+		}
 		System.out.print("Enter the e-mail address of the Faculty : ");
 		this.email = input.nextLine();
 	}
@@ -772,7 +987,20 @@ class Participant implements java.io.Serializable{
 	String participantMobile;
 	String participantOrganisation;
 	String participantEmail;
+	String regex = "[0-9]";
+	Pattern pattern = Pattern.compile(regex);
 	transient private Scanner input;
+	public boolean isStringLong(String s)
+	{
+	    try
+	    {
+	        Long.parseLong(s);
+	        return true;
+	    } catch (NumberFormatException ex)
+	    {
+	        return false;
+	    }
+	}
 	//function to create an instance of the class participant
 	public void participantCreator(){
 		input = new Scanner(System.in);
@@ -782,8 +1010,19 @@ class Participant implements java.io.Serializable{
 		this.participantAddress = input.nextLine();
 		System.out.print("Enter the Organisation name of which the Participant is affiliated to : ");
 		this.participantOrganisation = input.nextLine();
-		System.out.print("Enter the Mobile Number of the Participant : ");
-		this.participantMobile = input.nextLine();
+		//System.out.print("Enter the Mobile Number of the Participant : ");
+		//this.participantMobile = input.nextLine();
+		boolean mobileNum = true;
+		while(mobileNum){
+			System.out.print("Enter the Mobile Number of the Participant : ");
+			this.participantMobile = input.nextLine();
+			if(isStringLong(this.participantMobile)==true){
+				mobileNum = false;
+			}
+			else{
+				System.out.println("Sorry. Invalid Entry. ");
+			}
+		}
 		System.out.print("Enter the E-mail address of the Participant : ");
 		this.participantEmail = input.nextLine();
 	}
@@ -797,6 +1036,7 @@ class Course implements java.io.Serializable{
 	String courseName;
 	String courseFee;
 	String startDate;
+	int courseCoordinatorStatus = 0;//o implies the course has no CourseCoordinator and 1 implies that the course has a courseCoordinator
 	transient SimpleDateFormat datef = new SimpleDateFormat("dd/MM/yyyy");
 	Calendar courseStartDate = Calendar.getInstance();
 	String courseDuration;
@@ -807,6 +1047,8 @@ class Course implements java.io.Serializable{
 	//Participant []participantList;
 	ArrayList<Faculty> facultylist = new ArrayList<Faculty>(5);
 	ArrayList<Participant> participantlist = new ArrayList<Participant>(5);
+	String regex = "[0-9]";
+	Pattern pattern = Pattern.compile(regex);
 	transient private Scanner in;
 	//this function has been created to check the one year constraint 
 	public boolean dateCompare(int userDate){
@@ -828,12 +1070,23 @@ class Course implements java.io.Serializable{
 		}
 		return decision;
 	}
+	public boolean isStringLong(String s)
+	{
+	    try
+	    {
+	        Long.parseLong(s);
+	        return true;
+	    } catch (NumberFormatException ex)
+	    {
+	        return false;
+	    }
+	}
 	//function to create an instance of the class course
 	public boolean courseCreator() {
 		in = new Scanner(System.in);
 		System.out.print("Enter the Name of the Course : ");
 		this.courseName = in.nextLine();
-		System.out.print("Enter the Couse Fee(in Rupees) : ");
+		System.out.print("Enter the Course Fee(in Rupees) : ");
 		this.courseFee = in.nextLine();
 		boolean date = true;
 		while(date){
@@ -869,13 +1122,25 @@ class Course implements java.io.Serializable{
 		this.courseCoordinator.facultyName = in.nextLine();
 		System.out.print("Enter the affiliated Department :");
 		this.courseCoordinator.affiliatedDepartment = in.nextLine();
-		System.out.print("Enter the address of the Faculty : ");
+		System.out.print("Enter the address of the Course Co-ordinator : ");
 		this.courseCoordinator.facultyAddress = in.nextLine();
-		System.out.print("Enter the mobile number of the Faculty : ");
-		this.courseCoordinator.mobile = in.nextLine();
-		System.out.print("Enter the e-mail address of the Faculty : ");
+		//System.out.print("Enter the mobile number of the Course Co-ordinator : ");
+		//this.courseCoordinator.mobile = in.nextLine();
+		boolean mobileNumber = true;
+		while(mobileNumber){
+			System.out.print("Enter the mobile number of the Course Co-ordinator : ");
+			this.courseCoordinator.mobile = in.nextLine();
+			if(isStringLong(this.courseCoordinator.mobile)==true){
+				mobileNumber = false;
+			}
+			else{
+				System.out.println("Sorry. Invalid Entry. ");
+			}
+		}
+		System.out.print("Enter the e-mail address of the Course Co-ordinator : ");
 		this.courseCoordinator.email = in.nextLine();
 		System.out.print("Course "+this.courseName+ " successfully created!!\n");
+		this.courseCoordinatorStatus = 1;
 		System.out.print("\nEnter the number of Faculty Members as Instructors for the Course : ");
 		try {
 			this.instructorCount = Integer.parseInt(in.nextLine());
